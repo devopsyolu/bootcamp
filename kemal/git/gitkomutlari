@@ -1,0 +1,19 @@
+
+
+git clone
+git checkout
+
+git add .
+git commit -m 'Abc'
+git push
+
+git reset --soft a1b2c3
+git reset --hard a1b2c3
+
+git cherry-pick a1b2c3
+git rebase -i HEAD~4
+
+git status
+git log --oneline
+git reflog
+git config
