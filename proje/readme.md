@@ -8,6 +8,8 @@ Herkes çalışma alanı oluşturmak için `main` branch'ten kendi yeni branch'i
 
 Mevcut repository'deki `kemal` klasörünün içindeki dosya ve klasör yapısını siz de kendi branch'inizde oluşturmalısınız.
 
+Değişikliklerinizi Pull Request olarak açın ve `main` e birleştirmeye çalışın, birleştirirken squash, rebase, merge seçenekleri çıkacak bunlardan hangisi ile yapacağınızı PR'ın açıklama kısmına yazınız, beni reviewer olarak ekleyin. @ işaretini kullanarak beni mention edebilirsiniz.
+
 ## AWS Klasörü
 
 ### 1. EC2 Bilgileri
