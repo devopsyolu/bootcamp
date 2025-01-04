@@ -1,0 +1,88 @@
+Ödev 
+Linux sunucunuzda, aşağıdaki işlemleri gerçekleştiren bir servis oluşturun:
+  - Sunucuyu **`sudo apt update && sudo apt upgrade -y`** komutlarıyla güncelleyen bir shell script hazırlayın.
+  - Bu komutun çıktısını yönlendirme sembolleri ile `/tmp` klasörüne aktarın.
+  - Hazırladığınız script'i her gün sabah 5'te otomatik olarak çalışacak şekilde bir cronjob ile ayarlayın.
+  - Linux servisini oluşturmak için shell script'inizi servis dosyası ile ilişkilendirin.
+
+update-server.sh dosyasını oluşturmak için aşağıdaki adımları takip edebilirsiniz:
+
+1. Terminal Açma
+Öncelikle bir terminal açın.
+
+2. Dosyayı Oluşturma
+Aşağıdaki komutla boş bir dosya oluşturabilirsiniz:
+
+sudo nano /usr/local/bin/update-server.sh
+
+3. Script İçeriğini Ekleyin
+Komut çalıştırıldığında, metin düzenleyici açılacak. Aşağıdaki script içeriğini kopyalayın ve yapıştırın:
+
+*******************************
+
+#!/bin/bash
+
+# Script: /usr/local/bin/update-server.sh
+# Purpose: Update and upgrade the system, logging output to /tmp/update-server.log
+
+LOG_FILE="/tmp/update-server.log"
+
+# Perform update and upgrade
+{
+    echo "==== Update and Upgrade Started: $(date) ===="
+    sudo apt update && sudo apt upgrade -y
+    echo "==== Update and Upgrade Completed: $(date) ===="
+} &> "$LOG_FILE"
+
+*********************************************
+
+
+4. Dosyayı Kaydetme
+İçeriği yapıştırdıktan sonra CTRL + O tuşlarına basarak dosyayı kaydedin.
+Ardından ENTER tuşuna basın.
+Düzenleyiciden çıkmak için CTRL + X tuşlarına basın.
+
+
+5. Dosyayı Çalıştırılabilir Hale Getirme
+Shell script'inizin çalıştırılabilir olması için aşağıdaki komutu çalıştırın:
+
+sudo chmod +x /usr/local/bin/update-server.sh
+Artık update-server.sh script'iniz çalıştırılabilir ve sistem güncelleme işlemleri için hazır! Script'i şu komutla manuel olarak test edebilirsiniz:
+
+sudo /usr/local/bin/update-server.sh
+Bu komut çalıştırıldığında /tmp/update-server.log dosyasına log bilgileri kaydedilecektir.
+
+6. Cronjob Ayarı
+Script'i her gün sabah 5'te çalıştırmak için bir cronjob ekleyin:
+
+Crontab düzenleyicisini açın:
+
+crontab -e
+
+daha ben nano editorun almasını tercih ettim.
+Aşağıdaki satırı ekleyin:
+
+0 5 * * * /usr/local/bin/update-server.sh
+
+7. Linux Servisi Tanımlama
+Servis dosyasını /etc/systemd/system/update-server.service yolunda oluşturun ve aşağıdaki içeriği ekleyin:
+
+********************************
+
+[Unit]
+Description=Daily Server Update Script
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/update-server.sh
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+
+*****************************
+
+Servis dosyasını etkinleştirmek için şu komutları çalıştırın:
+
+sudo systemctl daemon-reload
+sudo systemctl enable update-server.service
