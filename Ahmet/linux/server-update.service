@@ -1,0 +1,9 @@
+[Unit]
+Description=Sunucu Güncelleme Servisi
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/ubuntu/server-update.sh
+
+[Install]
+WantedBy=multi-user.target
