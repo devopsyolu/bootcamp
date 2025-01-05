@@ -1,0 +1,19 @@
+ubuntu@ip-172-31-46-155:~$ lsblk
+NAME     MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0    0 26.3M  1 loop /snap/amazon-ssm-agent/9881
+loop1      7:1    0 73.9M  1 loop /snap/core22/1663
+loop2      7:2    0 38.8M  1 loop /snap/snapd/21759
+xvda     202:0    0   10G  0 disk 
+├─xvda1  202:1    0    7G  0 part /
+├─xvda14 202:14   0    4M  0 part 
+├─xvda15 202:15   0  106M  0 part /boot/efi
+└─xvda16 259:0    0  913M  0 part /boot
+ubuntu@ip-172-31-46-155:~$ df -hT
+Filesystem     Type   Size  Used Avail Use% Mounted on
+/dev/root      ext4   6.8G  1.7G  5.1G  26% /
+tmpfs          tmpfs  479M     0  479M   0% /dev/shm
+tmpfs          tmpfs  192M  872K  191M   1% /run
+tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
+/dev/xvda16    ext4   881M   76M  744M  10% /boot
+/dev/xvda15    vfat   105M  6.1M   99M   6% /boot/efi
+tmpfs          tmpfs   96M   12K   96M   1% /run/user/1000
