@@ -1,0 +1,12 @@
+[Unit]
+Description=Sunucu Güncelleme Servisi
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/bin/bash /home/ubuntu/bootcamp/bootcamp/mlhkrc/shell/guncelle.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

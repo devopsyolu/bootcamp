@@ -1,0 +1,14 @@
+NAME     MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0    0 55.7M  1 loop /snap/core18/2829
+loop1      7:1    0 25.2M  1 loop /snap/amazon-ssm-agent/7993
+loop2      7:2    0 55.4M  1 loop /snap/core18/2846
+loop3      7:3    0   64M  1 loop /snap/core20/2379
+loop4      7:4    0 63.7M  1 loop /snap/core20/2434
+loop5      7:5    0 89.4M  1 loop /snap/lxd/31333
+loop6      7:6    0   87M  1 loop /snap/lxd/29351
+loop7      7:7    0 44.3M  1 loop /snap/snapd/23258
+loop8      7:8    0 38.8M  1 loop /snap/snapd/21759
+xvda     202:0    0   10G  0 disk 
+├─xvda1  202:1    0  7.9G  0 part /
+├─xvda14 202:14   0    4M  0 part 
+└─xvda15 202:15   0  106M  0 part /boot/efi
