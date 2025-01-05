@@ -67,6 +67,8 @@ Aşağıdaki satırı ekleyin:
 7. Linux Servisi Tanımlama
 Servis dosyasını /etc/systemd/system/update-server.service yolunda oluşturun ve aşağıdaki içeriği ekleyin:
 
+sudo nano /etc/systemd/system/update-server.service
+
 ********************************
 
 [Unit]
@@ -85,4 +87,5 @@ WantedBy=multi-user.target
 Servis dosyasını etkinleştirmek için şu komutları çalıştırın:
 
 sudo systemctl daemon-reload
+sudo systemctl start update-server.service
 sudo systemctl enable update-server.service
