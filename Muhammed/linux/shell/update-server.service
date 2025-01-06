@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Server Update Script
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/update-server.sh
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
