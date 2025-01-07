@@ -1,0 +1,29 @@
+lsblk
+NAME     MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0    0 26.3M  1 loop /snap/amazon-ssm-agent/9881
+loop1      7:1    0 73.9M  1 loop /snap/core22/1663
+loop2      7:2    0 38.8M  1 loop /snap/snapd/21759
+loop3      7:3    0 44.3M  1 loop /snap/snapd/23258
+loop4      7:4    0 73.9M  1 loop /snap/core22/1722
+xvda     202:0    0   10G  0 disk
+├─xvda1  202:1    0    7G  0 part /
+├─xvda14 202:14   0    4M  0 part
+├─xvda15 202:15   0  106M  0 part /boot/efi
+└─xvda16 259:0    0  913M  0 part /boot
+xvdf     202:80   0    5G  0 disk
+├─xvdf1  202:81   0    2G  0 part /opt
+└─xvdf2  202:82   0    3G  0 part /mnt
+xvdg     202:96   0    3G  0 disk
+├─xvdg1  202:97   0    1G  0 part
+└─xvdg2  202:98   0    2G  0 part
+df -hT
+Filesystem     Type   Size  Used Avail Use% Mounted on
+/dev/root      ext4   6.8G  2.3G  4.5G  34% /
+tmpfs          tmpfs  479M     0  479M   0% /dev/shm
+tmpfs          tmpfs  192M  912K  191M   1% /run
+tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
+/dev/xvda16    ext4   881M  133M  687M  17% /boot
+/dev/xvda15    vfat   105M  6.1M   99M   6% /boot/efi
+/dev/xvdf1     ext4   2.0G   24K  1.8G   1% /opt
+/dev/xvdf2     xfs    3.0G   90M  2.9G   3% /mnt
+tmpfs          tmpfs   96M   12K   96M   1% /run/user/0
