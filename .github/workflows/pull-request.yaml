@@ -25,25 +25,15 @@ jobs:
     outputs:
       var2: ${{ steps.proje-1.outputs.var2 }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run-1
-        run: echo "Hello ${{ env.ENV_GENERAL }}"
-      - run: echo "Hello ${{ env.ENV_GENERAL }}"
-      - run: |
-          echo "Hello ${{ vars.VERSION }}"
-          echo "Hello ${{ secrets.TOKEN }}"
-      - name: Proje-1
-        id: proje-1
-        shell: bash
-        run: |
-          echo "var1=key1" >> $GITHUB_ENV
-          echo "var2=key2" >> $GITHUB_OUTPUT
-      - name: Proje-2
-        run: |
-          echo "${{ env.var1 }}"
+      - name: Actions
+        id: action-1
+        uses: devopsyolu/bootcamp/.github/actions/devopsyolu-deneme@actions
+        env:
+          ENV_GENERAL: ${{ env.ENV_GENERAL }}
+          VERSION: ${{ vars.VERSION }}
+          TOKEN: ${{ secrets.TOKEN }}
+      - run: echo ${{ steps.action-1.outputs.var2 }}
+
   job-2:
     name: Pull request pipeline job-2
     runs-on: devopsyolu
