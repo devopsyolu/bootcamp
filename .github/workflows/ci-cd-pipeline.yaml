@@ -1,0 +1,55 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - actions
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Restore dependencies
+      run: |
+        cd kemal/ci-cd/ci-cd-project
+        ls -ltrha
+        dotnet restore
+
+    - name: Build project
+      run: |
+        cd kemal/ci-cd/ci-cd-project
+        ls -ltrha
+        dotnet build --no-restore -c Release
+
+    - name: Run tests
+      run: |
+        cd kemal/ci-cd/ci-cd-project
+        dotnet test --no-build --verbosity normal
+        ls -ltrha
+    - name: Docker build
+      run: |
+        cd kemal/ci-cd/ci-cd-project
+        docker build -t ci-cd-project .
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.sha }}
+        release_name: "Release ${{ github.sha }}"
+        body: "Docker image built and pushed to ECR."
+        draft: false
+        prerelease: false
