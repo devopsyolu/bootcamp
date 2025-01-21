@@ -2,9 +2,10 @@ name: Pull request pipeline
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
-  push: { branches: [actions] }
+  push:
+    branches: [actions]
 permissions:
   contents: read
   pull-requests: write
@@ -32,6 +33,18 @@ jobs:
       - run: |
           echo "Hello ${{ vars.VERSION }}"
           echo "Hello ${{ secrets.TOKEN }}"
+      - name: Proje-1
+        id: proje-1
+        shell: bash
+        run: |
+          echo "var1=key1" >> $GITHUB_ENV
+      - name: Proje-2
+        run: |
+          echo "${{ env.var1 }}"
+      - name: Proje-3
+        run: |
+          echo "${{ steps.proje-1.var1 }}"
+
   job-2:
     name: Pull request pipeline job-2
     runs-on: devopsyolu
@@ -47,6 +60,7 @@ jobs:
         run: |
           echo "Token=${{ secrets.TOKEN }}" >> token.txt
           cat token.txt
+      - name:
   job-3:
     name: Pull request pipeline job-3
     runs-on: self-hosted
