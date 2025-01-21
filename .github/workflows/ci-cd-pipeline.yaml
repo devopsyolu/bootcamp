@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - actions
-# env:
-#   DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
-#   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+env:
+  DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 jobs:
   build-and-test:
     runs-on: self-hosted
