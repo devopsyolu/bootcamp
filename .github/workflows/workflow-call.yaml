@@ -3,7 +3,11 @@ name: Workflow call pipeline
 on:
   push:
     branches: [actions]
-
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: write
 jobs:
   job-1:
     uses: devopsyolu/bootcamp/.github/workflows/pull-request.yaml@actions
