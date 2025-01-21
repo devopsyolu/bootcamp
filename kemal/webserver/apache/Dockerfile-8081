@@ -1,0 +1,18 @@
+
+# Use the latest official Python base image
+FROM python:3.12-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the application code into the container
+COPY app8081.py .
+
+# Install required Python packages
+RUN pip install --no-cache-dir flask
+
+# Expose port 8081
+EXPOSE 8081
+
+# Run the application
+CMD ["python", "app8081.py"]
