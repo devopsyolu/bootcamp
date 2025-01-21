@@ -16,7 +16,7 @@ env:
 
 jobs:
   job-1:
-    name: Pull request pipeline job-1 # Zorunlu degil
+    name: Pull request pipeline job-1
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' }}
     env:
@@ -36,7 +36,7 @@ jobs:
     name: Pull request pipeline job-2
     runs-on: devopsyolu
     if: ${{ github.event_name != 'push' }}
-    needs: job-1  # job-1 tamamlanmadan job-2 çalışmayacak
+    needs: job-1
     environment: development
     steps:
       - name: Versiyon goster
@@ -50,7 +50,7 @@ jobs:
   job-3:
     name: Pull request pipeline job-3
     runs-on: self-hosted
-    needs: job-2  # job-2 tamamlanmadan job-3 çalışmayacak
+    needs: job-2
     environment: production
     steps:
       - name: Versiyon goster
