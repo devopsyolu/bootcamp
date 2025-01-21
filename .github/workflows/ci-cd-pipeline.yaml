@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -41,6 +41,7 @@ jobs:
         cd kemal/ci-cd/ci_cd_project
         docker build -t ci_cd_project .
         docker run -d -p 80:80 ci_cd_project
+        docker ps
         curl localhost:80
 
   create-release:
