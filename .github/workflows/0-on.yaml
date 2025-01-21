@@ -1,0 +1,26 @@
+# Bu pipeline/workflow dosyası, GitHub Actions kullanarak CI (Continuous Integration) sürecini tanımlar.
+# Bu sürecin amacı, kodunuzun bir event ile tetiklemeyi gosterir.
+# Bu eventler:
+# - Herhangi bir branch'e push yapıldığında (main branch'i haricinde)
+# - Bir pull request açıldığında
+# - Manuel olarak tetiklendiğinde
+# - Her pazartesi günü saat 00:00'da
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 0 * * 1"   # Haftada bir pazartesi günleri 00:00'da çalıştır
+  workflow_dispatch:     # Manuel tetikleme
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run-1
+        run: echo "Hello ${{ github.actor }}"
