@@ -60,7 +60,6 @@ jobs:
         run: |
           echo "Token=${{ secrets.TOKEN }}" >> token.txt
           cat token.txt
-      - name:
   job-3:
     name: Pull request pipeline job-3
     runs-on: self-hosted
