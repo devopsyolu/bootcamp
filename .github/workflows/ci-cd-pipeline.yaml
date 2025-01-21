@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - actions
-env:
-  DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
-  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+# env:
+#   DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
+#   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 jobs:
   build-and-test:
     runs-on: self-hosted
@@ -38,12 +38,14 @@ jobs:
         cd kemal/ci-cd/ci_cd_project
         dotnet test --no-build -c Release --logger \"trx;LogFileName=test_results.trx\"
         ls -ltrha
+
     - name: Docker build
       run: |
         cd kemal/ci-cd/ci_cd_project
         docker build -t ci_cd_project .
         docker run -d -p 80:80 ci_cd_project
         docker ps
+        sleep 10
         curl localhost:80
 
   create-release:
@@ -53,6 +55,8 @@ jobs:
       contents: write
       packages: write
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
