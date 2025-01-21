@@ -19,27 +19,27 @@ jobs:
 
     - name: Restore dependencies
       run: |
-        cd kemal/ci-cd/ci-cd-project
+        cd kemal/ci-cd/ci_cd_project
         ls -ltrha
         dotnet restore
         ls -ltrha
 
     - name: Build project
       run: |
-        cd kemal/ci-cd/ci-cd-project
+        cd kemal/ci-cd/ci_cd_project
         ls -ltrha
         dotnet build --no-restore -c Release
         ls -ltrha
 
     - name: Run tests
       run: |
-        cd kemal/ci-cd/ci-cd-project
+        cd kemal/ci-cd/ci_cd_project
         dotnet test --no-build -c Release --logger \"trx;LogFileName=test_results.trx\"
         ls -ltrha
     - name: Docker build
       run: |
-        cd kemal/ci-cd/ci-cd-project
-        docker build -t ci-cd-project .
+        cd kemal/ci-cd/ci_cd_project
+        docker build -t ci_cd_project .
 
   create-release:
     runs-on: ubuntu-latest
