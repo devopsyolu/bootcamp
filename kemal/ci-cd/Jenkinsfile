@@ -4,7 +4,17 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build triggered by GitHub webhook!'
-                checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubpat', url: 'https://github.com/devopsyolu/bootcamp']])
+                script {
+                    // Checkout tetikleyen branch'i dinamik olarak al
+                    checkout scmGit(
+                        branches: [[name: "${env.GIT_BRANCH}"]],
+                        extensions: [],
+                        userRemoteConfigs: [[
+                            credentialsId: 'githubpat',
+                            url: 'https://github.com/devopsyolu/bootcamp'
+                        ]]
+                    )
+                }
             }
         }
     }
