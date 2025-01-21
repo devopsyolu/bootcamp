@@ -1,0 +1,11 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Build triggered by GitHub webhook!'
+                checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubpat', url: 'https://github.com/devopsyolu/bootcamp']])
+            }
+        }
+    }
+}
