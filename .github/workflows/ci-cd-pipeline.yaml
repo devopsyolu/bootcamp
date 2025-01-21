@@ -22,17 +22,19 @@ jobs:
         cd kemal/ci-cd/ci-cd-project
         ls -ltrha
         dotnet restore
+        ls -ltrha
 
     - name: Build project
       run: |
         cd kemal/ci-cd/ci-cd-project
         ls -ltrha
         dotnet build --no-restore -c Release
+        ls -ltrha
 
     - name: Run tests
       run: |
         cd kemal/ci-cd/ci-cd-project
-        dotnet test --no-build --verbosity normal
+        dotnet test --no-build -c Release --logger \"trx;LogFileName=test_results.trx\"
         ls -ltrha
     - name: Docker build
       run: |
