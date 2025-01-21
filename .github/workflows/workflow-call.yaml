@@ -1,0 +1,10 @@
+name: Workflow call pipeline
+
+on:
+  push:
+    branches: [actions]
+
+jobs:
+  job-1:
+    uses: ./.github/workflows/workflow-call.yaml
+
