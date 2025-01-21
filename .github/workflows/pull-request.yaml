@@ -18,7 +18,7 @@ jobs:
   job-1:
     name: Pull request pipeline job-1
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
+    # if: ${{ github.event_name == 'pull_request' }}
     env:
       ENV_GENERAL: "JOB1_DEĞİŞKEN"
     outputs:
@@ -36,7 +36,7 @@ jobs:
   job-2:
     name: Pull request pipeline job-2
     runs-on: devopsyolu
-    if: ${{ github.event_name != 'push' }}
+    # if: ${{ github.event_name != 'push' }}
     needs: job-1
     environment: development
     steps:
@@ -53,7 +53,6 @@ jobs:
   job-3:
     name: Pull request pipeline job-3
     runs-on: self-hosted
-    needs: job-2
     environment: production
     steps:
       - name: Versiyon goster
