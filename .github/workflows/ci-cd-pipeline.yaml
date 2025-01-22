@@ -42,7 +42,7 @@ jobs:
     - name: Docker build
       run: |
         cd kemal/ci-cd/ci_cd_project
-        docker build -t ci_cd_project .
+        docker build --tag ci_cd_project -f Dockerfile .
         docker run -d -p 80:80 ci_cd_project
         docker ps
         sleep 10
