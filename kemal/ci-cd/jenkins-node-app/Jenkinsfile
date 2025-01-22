@@ -3,13 +3,13 @@ pipeline {
 
     // Ortak ortam değişkenleri
     environment {
-        NODE_ENV = 'production' // Uygulama için ortam
-        DOCKER_REGISTRY = 'kemalgokhan/myapp' // Docker Hub'daki imaj ismi
+        // NODE_ENV = 'production' // Uygulama için ortam
+        DOCKER_REGISTRY = '038462756432.dkr.ecr.eu-west-1.amazonaws.com/devopsyolu' // Docker Hub'daki imaj ismi
     }
 
     // Parametreler: Kullanıcıdan giriş alınır
     parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Hangi branch üzerinden build yapılacak?')
+        string(name: 'BRANCH_NAME', defaultValue: 'actions', description: 'Hangi branch üzerinden build yapılacak?')
         booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Testler çalıştırılsın mı?')
         choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Hangi ortama deploy yapılacak?')
     }
@@ -50,10 +50,12 @@ pipeline {
             steps {
                 script {
                     echo 'Testler çalıştırılıyor...'
-                    sh '''
+                    sh """
                     cd kemal/ci-cd/jenkins-node-app
+                    ls -ltrha
+
                     npm test
-                    '''
+                    """
                 }
             }
         }
@@ -62,8 +64,7 @@ pipeline {
             steps {
                 script {
                     echo "Uygulama ${params.BRANCH_NAME} branch üzerinden build ediliyor..."
-                    sh 'cd kemal/ci-cd/jenkins-node-app'
-                    sh 'npm run build'
+                    sh '''npm run build --prefix kemal/ci-cd/jenkins-node-app'''
                 }
             }
         }
@@ -79,12 +80,19 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    echo 'Docker imajı oluşturuluyor...'
-                    sh """
-                    docker build -t ${DOCKER_REGISTRY}:${params.BRANCH_NAME} .
-                    docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASSWORD}
-                    # docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
-                    """
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'devopsyolu/admin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+
+                        sh"""
+                        aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 038462756432.dkr.ecr.eu-west-1.amazonaws.com/devopsyolu
+                        """
+                        echo 'Docker imajı oluşturuluyor...'
+                        sh """
+                        cd kemal/ci-cd/jenkins-node-app
+                        docker build -t ${DOCKER_REGISTRY}:${params.BRANCH_NAME} -f Dockerfile ."""
+                        sh """
+                        docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
+                        """
+                    }
                 }
             }
         }
@@ -107,6 +115,7 @@ pipeline {
     post {
         always {
             echo 'Pipeline tamamlandı.'
+            cleanWs()
         }
         success {
             echo 'Pipeline başarıyla tamamlandı.'
