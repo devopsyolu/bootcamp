@@ -1,0 +1,103 @@
+pipeline {
+    agent any
+
+    // Ortak ortam değişkenleri
+    environment {
+        NODE_ENV = 'production' // Uygulama için ortam
+        DOCKER_REGISTRY = 'dockerhubusername/myapp' // Docker Hub'daki imaj ismi
+    }
+
+    // Parametreler: Kullanıcıdan giriş alınır
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Hangi branch üzerinden build yapılacak?')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Testler çalıştırılsın mı?')
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Hangi ortama deploy yapılacak?')
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES') // Maksimum 30 dakika bekler
+        buildDiscarder(logRotator(numToKeepStr: '10')) // Son 10 build saklanır
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo "Seçilen branch: ${params.BRANCH_NAME}"
+                    checkout scmGit(branches: [[name: '*/actions']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubpat', url: 'https://github.com/devopsyolu/bootcamp']])
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    echo 'Bağımlılıklar yükleniyor...'
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            when {
+                expression {
+                    return params.RUN_TESTS
+                }
+            }
+            steps {
+                script {
+                    echo 'Testler çalıştırılıyor...'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo "Uygulama ${params.BRANCH_NAME} branch üzerinden build ediliyor..."
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    echo 'Docker imajı oluşturuluyor...'
+                    sh """
+                    docker build -t ${DOCKER_REGISTRY}:${params.BRANCH_NAME} .
+                    docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASSWORD}
+                    docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                expression {
+                    return params.DEPLOY_ENV != 'dev'
+                }
+            }
+            steps {
+                script {
+                    echo "Deploy işlemi ${params.DEPLOY_ENV} ortamına yapılıyor..."
+                    sh "./deploy.sh ${params.DEPLOY_ENV}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline tamamlandı.'
+        }
+        success {
+            echo 'Pipeline başarıyla tamamlandı.'
+        }
+        failure {
+            echo 'Pipeline başarısız oldu.'
+        }
+    }
+}

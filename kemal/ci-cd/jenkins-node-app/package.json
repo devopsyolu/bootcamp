@@ -1,0 +1,15 @@
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "description": "Jenkins CI pipeline test application",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest",
+    "build": "echo 'Building application...' && mkdir -p build && echo 'Build successful' > build/output.txt"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^29.4.3"
+  }
+}
