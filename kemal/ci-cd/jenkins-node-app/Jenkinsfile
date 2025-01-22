@@ -4,7 +4,7 @@ pipeline {
     // Ortak ortam değişkenleri
     environment {
         NODE_ENV = 'production' // Uygulama için ortam
-        DOCKER_REGISTRY = 'dockerhubusername/myapp' // Docker Hub'daki imaj ismi
+        DOCKER_REGISTRY = 'kemalgokhan/myapp' // Docker Hub'daki imaj ismi
     }
 
     // Parametreler: Kullanıcıdan giriş alınır
@@ -33,7 +33,10 @@ pipeline {
             steps {
                 script {
                     echo 'Bağımlılıklar yükleniyor...'
-                    sh 'npm install'
+                    sh """
+                    cd kemal/ci-cd/jenkins-node-app
+                    npm install
+                    """
                 }
             }
         }
@@ -47,7 +50,10 @@ pipeline {
             steps {
                 script {
                     echo 'Testler çalıştırılıyor...'
-                    sh 'npm test'
+                    sh '''
+                    cd kemal/ci-cd/jenkins-node-app
+                    npm test
+                    '''
                 }
             }
         }
@@ -56,8 +62,17 @@ pipeline {
             steps {
                 script {
                     echo "Uygulama ${params.BRANCH_NAME} branch üzerinden build ediliyor..."
+                    sh 'cd kemal/ci-cd/jenkins-node-app'
                     sh 'npm run build'
                 }
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                sh 'cd kemal/ci-cd/jenkins-node-app'
+                // İsteğe bağlı: build çıktıları veya log dosyalarını arşivleyebilirsiniz
+                archiveArtifacts artifacts: '**', fingerprint: true
             }
         }
 
@@ -68,7 +83,7 @@ pipeline {
                     sh """
                     docker build -t ${DOCKER_REGISTRY}:${params.BRANCH_NAME} .
                     docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASSWORD}
-                    docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
+                    # docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
                     """
                 }
             }
