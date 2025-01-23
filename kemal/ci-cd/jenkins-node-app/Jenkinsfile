@@ -1,0 +1,127 @@
+pipeline {
+    agent { label 'linux-ssh' } // Jenkins ajanı: linux-ssh etiketli ajanı kullan
+
+    // Ortak ortam değişkenleri
+    environment {
+        // NODE_ENV = 'production' // Uygulama için ortam
+        DOCKER_REGISTRY = '038462756432.dkr.ecr.eu-west-1.amazonaws.com/devopsyolu' // Docker Hub'daki imaj ismi
+    }
+
+    // Parametreler: Kullanıcıdan giriş alınır
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'actions', description: 'Hangi branch üzerinden build yapılacak?')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Testler çalıştırılsın mı?')
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Hangi ortama deploy yapılacak?')
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES') // Maksimum 30 dakika bekler
+        buildDiscarder(logRotator(numToKeepStr: '10')) // Son 10 build saklanır
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo "Seçilen branch: ${params.BRANCH_NAME}"
+                    checkout scmGit(branches: [[name: '*/actions']], extensions: [], userRemoteConfigs: [[credentialsId: 'bootcamp-github-token', url: 'https://github.com/devopsyolu/bootcamp']])
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    echo 'Bağımlılıklar yükleniyor...'
+                    sh """
+                    cd kemal/ci-cd/jenkins-node-app
+                    npm install
+                    """
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            when {
+                expression {
+                    return params.RUN_TESTS
+                }
+            }
+            steps {
+                script {
+                    echo 'Testler çalıştırılıyor...'
+                    sh """
+                    cd kemal/ci-cd/jenkins-node-app
+                    ls -ltrha
+
+                    npm test
+                    """
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo "Uygulama ${params.BRANCH_NAME} branch üzerinden build ediliyor..."
+                    sh '''npm run build --prefix kemal/ci-cd/jenkins-node-app'''
+                }
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                sh 'cd kemal/ci-cd/jenkins-node-app'
+                // İsteğe bağlı: build çıktıları veya log dosyalarını arşivleyebilirsiniz
+                archiveArtifacts artifacts: '**', fingerprint: true
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'devopsyolu/admin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+
+                        sh"""
+                        aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 038462756432.dkr.ecr.eu-west-1.amazonaws.com/devopsyolu
+                        """
+                        echo 'Docker imajı oluşturuluyor...'
+                        sh """
+                        cd kemal/ci-cd/jenkins-node-app
+                        docker build -t ${DOCKER_REGISTRY}:${params.BRANCH_NAME} -f Dockerfile ."""
+                        sh """
+                        docker push ${DOCKER_REGISTRY}:${params.BRANCH_NAME}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                expression {
+                    return params.DEPLOY_ENV != 'dev'
+                }
+            }
+            steps {
+                script {
+                    echo "Deploy işlemi ${params.DEPLOY_ENV} ortamına yapılıyor..."
+                    sh "kemal/ci-cd/jenkins-node-app/deploy.sh ${params.DEPLOY_ENV}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline tamamlandı.'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline başarıyla tamamlandı.'
+        }
+        failure {
+            echo 'Pipeline başarısız oldu.'
+        }
+    }
+}

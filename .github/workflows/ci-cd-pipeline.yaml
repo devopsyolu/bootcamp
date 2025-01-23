@@ -1,0 +1,63 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - actions
+env:
+  DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Restore dependencies
+      run: |
+        cd kemal/ci-cd/ci_cd_project
+        ls -ltrha
+        dotnet restore
+        ls -ltrha
+
+    - name: Build project
+      run: |
+        cd kemal/ci-cd/ci_cd_project
+        ls -ltrha
+        dotnet build --no-restore -c Release
+        ls -ltrha
+
+    - name: Run tests
+      run: |
+        cd kemal/ci-cd/ci_cd_project
+        dotnet test --no-build -c Release --logger \"trx;LogFileName=test_results.trx\"
+        ls -ltrha
+
+    - name: Docker build
+      run: |
+        cd kemal/ci-cd/ci_cd_project
+        docker build --tag ci_cd_project -f Dockerfile .
+        docker run -d -p 80:80 ci_cd_project
+        docker ps
+        sleep 10
+        curl localhost:80
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    permissions:
+      contents: write
+      packages: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ github.run_number }}

@@ -1,0 +1,30 @@
+name: 'Devopsyolu Deneme'
+description: 'Devopsyolu Deneme'
+outputs:
+  var2:
+    description: 'Outputs from the action'
+    value: ${{ steps.proje-1.outputs.var2 }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Run-1
+      shell: bash
+      run: echo "Hello ${{ env.ENV_GENERAL }}"
+    - run: |
+        echo "Hello ${{ env.VERSION }}"
+        echo "Hello ${{ env.TOKEN }}"
+      shell: bash
+    - name: Proje-1
+      id: proje-1
+      shell: bash
+      run: |
+        echo "var1=key1" >> $GITHUB_ENV
+        echo "var2=key2" >> $GITHUB_OUTPUT
+    - name: Proje-2
+      shell: bash
+      run: |
+        echo "${{ env.var1 }}"

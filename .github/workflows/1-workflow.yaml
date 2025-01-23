@@ -1,0 +1,15 @@
+# En basit anlamda bir GitHub Action dosyası aşağıdaki gibidir.
+# name: <Workflow İsmi> # Workflow ismi
+
+# on:
+#   <Tetikleyiciler (eventler)>
+
+# jobs:
+#   <Job İsmi>:
+#     runs-on: <Runner Seçimi>
+#     steps:
+#       - name: <Adım İsmi>
+#         run: <Komut veya script>
+#       - name: <Başka Bir Adım>
+#         uses: <GitHub Action ifadesi>
+
