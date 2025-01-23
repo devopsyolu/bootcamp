@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'linux-ssh' } // Jenkins ajanı: linux-ssh etiketli ajanı kullan
 
     // Ortak ortam değişkenleri
     environment {
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     echo "Seçilen branch: ${params.BRANCH_NAME}"
-                    checkout scmGit(branches: [[name: '*/actions']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubpat', url: 'https://github.com/devopsyolu/bootcamp']])
+                    checkout scmGit(branches: [[name: '*/actions']], extensions: [], userRemoteConfigs: [[credentialsId: 'bootcamp-github-token', url: 'https://github.com/devopsyolu/bootcamp']])
                 }
             }
         }
@@ -106,7 +106,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploy işlemi ${params.DEPLOY_ENV} ortamına yapılıyor..."
-                    sh "./deploy.sh ${params.DEPLOY_ENV}"
+                    sh "kemal/ci-cd/jenkins-node-app/deploy.sh ${params.DEPLOY_ENV}"
                 }
             }
         }
