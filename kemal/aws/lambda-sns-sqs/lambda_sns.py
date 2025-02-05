@@ -1,14 +1,22 @@
+# Bu Lambda fonksiyonu, SNS topic'e mesaj yayınlamak için kullanılır.
+# Bunun icin, SNS topic ARN ve SQS queue URL bilgileri gerekir.
+# Bu bilgiler, Lambda fonksiyonunun environment variables kısmında tanımlanmalıdır.
+# Test etmek için, aws'de lambda fonksiyonu açın ve python olarak bu kodu yapıştırın.
+# Daha sonra, test kısmında bir event oluşturun ve test edin.
+# Event örneği: { "message": "Hello from PublisherFunction!" }
+# Çıktısını görmek için, CloudWatch log'lara bakın.
+
 import json
 import boto3
 import os
 sns_client = boto3.client('sns')
 
-# Environment variables for SNS topic ARN and SQS queue URL
+# Environment variables for SNS topic ARN
 SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 
 def lambda_handler(event, context):
     """
-    Publishes a message to SNS. 
+    Publishes a message to SNS.
     This function is invoked manually from the Lambda console's "Test" section.
     """
     # 1. Get a message from the 'event', or default to something

@@ -1,3 +1,4 @@
+
 import json
 
 def lambda_handler(event, context):
@@ -7,7 +8,7 @@ def lambda_handler(event, context):
     """
     # 'Records' key contains the SQS messages
     records = event.get("Records", [])
-    
+
     print(f"Received {len(records)} messages from SQS.")
 
     for record in records:

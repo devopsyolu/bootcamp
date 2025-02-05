@@ -1,6 +1,17 @@
 // index.mjs
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+// Bu lambda function, API Gateway üzerinden gelen istekleri işler.
+// 1) /hello: GET isteği geldiğinde "Hello from Node.js 22!" mesajını döner.
+// 2) /upload: POST isteği geldiğinde, gelen JSON içeriğindeki "bucket" adlı S3 bucket'ına "file" içeriğini yazar.
+//    Örnek JSON: { "bucket": "my-bucket", "file": "Hello, World!" }
+// 3) Diğer durumlarda 404 hatası döner.
+// AWS Lambda'ya gidin, nodejs runtime seçin ve bu kodu yapıştırın.
+// API Gateway oluşturun ve bu Lambda fonksiyonunu bağlayın.
+// API Gateway üzerinden /hello ve /upload isteklerini test edin.
 
+
+// AWS SDK'sı için gerekli modülleri içe aktar
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+// Lambda fonksiyonu
 export const handler = async (event) => {
   console.log("Event received:", JSON.stringify(event));
 
