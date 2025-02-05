@@ -1,0 +1,71 @@
+name: Pull request pipeline
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: write
+
+env:
+  ENV_GENERAL: "GENEL_DEĞİŞKEN"
+
+jobs:
+  job-1:
+    name: Pull request pipeline job-1
+    runs-on: ubuntu-latest
+    # if: ${{ github.event_name == 'pull_request' }}
+    env:
+      ENV_GENERAL: "JOB1_DEĞİŞKEN"
+    outputs:
+      var2: ${{ steps.proje-1.outputs.var2 }}
+    steps:
+      - name: Actions
+        id: action-1
+        uses: devopsyolu/bootcamp/.github/actions/devopsyolu-deneme@actions
+        env:
+          ENV_GENERAL: ${{ env.ENV_GENERAL }}
+          VERSION: ${{ vars.VERSION }}
+          TOKEN: ${{ secrets.TOKEN }}
+      - run: echo ${{ steps.action-1.outputs.var2 }}
+
+  job-2:
+    name: Pull request pipeline job-2
+    runs-on: devopsyolu
+    # if: ${{ github.event_name != 'push' }}
+    needs: job-1
+    environment: development
+    steps:
+      - name: Versiyon goster
+        run: echo "Versiyon=${{ vars.VERSION }}"
+      - name: Token goster
+        run: echo "Token=${{ secrets.TOKEN }}"
+      - name: Token goster
+        run: |
+          echo "Token=${{ secrets.TOKEN }}" >> token.txt
+          cat token.txt
+      - name: Output goster
+        run: echo "var2=${{ needs.job-1.outputs.var2 }}"
+  job-3:
+    name: Pull request pipeline job-3
+    runs-on: self-hosted
+    environment: production
+    steps:
+      - name: Versiyon goster
+        run: echo "Versiyon=${{ vars.VERSION }}"
+      - name: Token goster
+        run: echo "Token=${{ secrets.TOKEN }}"
+      - name: Token goster
+        run: |
+          echo "Token=${{ secrets.TOKEN }}" >> token.txt
+          cat token.txt
+  # job-4:
+  #   name: Pull request pipeline job-4
+  #   runs-on: self-hosted
+  #   needs: [job-2, job-3]  # job-2 ve job-3 tamamlanmadan job-4 çalışmayacak
+  #   steps:
+
