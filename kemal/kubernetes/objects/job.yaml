@@ -1,0 +1,19 @@
+# Job manifest dosyası
+# Bu dosya, tek seferlik çalışan görevleri tanımlar.
+# CronJob ile aynı şekilde çalışır. Farkı ise CronJob'da belirli bir zamanlamaya göre çalışır.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-job       # Job adı
+  namespace: my-namespace # Oluşturulacağı namespace
+spec:
+  template:
+    metadata:
+      name: job
+    spec:
+      restartPolicy: Never  # Görev başarısız olsa tekrar deneme
+      containers:
+      - name: job
+        image: busybox       # Basit image
+        command: ["sh", "-c", "echo Job executed; sleep 10"]  # Çalıştırılacak komut
+  backoffLimit: 4           # Yeniden deneme limiti 

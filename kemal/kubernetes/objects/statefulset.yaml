@@ -1,0 +1,33 @@
+# StatefulSet manifest dosyası
+# Bu dosya, durum bilgisi gerektiren uygulamalar için pod'ların sıralı ve kimlikli bir şekilde oluşturulmasını sağlar.
+# StatefulSet, pod'ların belirli bir sırada veya belirli bir adla oluşturulmasını sağlar.
+# Mesela bir database'in oluşturulması gibi.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: example-statefulset  # StatefulSet adı
+  namespace: my-namespace     # Oluşturulacağı namespace
+spec:
+  serviceName: "example-headless"  # StatefulSet pod'larının ağ iletişimi için headless service adı
+  replicas: 2                     # Çalıştırılacak pod sayısı
+  selector:
+    matchLabels:
+      app: stateful-app         # Eşleştirme etiketi
+  template:
+    metadata:
+      labels:
+        app: stateful-app       # Pod'a atanacak etiket
+    spec:
+      containers:
+      - name: stateful-container  # Container adı
+        image: nginx:latest       # Kullanılan image
+        ports:
+        - containerPort: 80       # Container portu
+  volumeClaimTemplates:
+  - metadata:
+      name: data                # PVC adı
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi          # İstenen disk kapasitesi 

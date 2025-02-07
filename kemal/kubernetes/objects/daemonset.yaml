@@ -1,0 +1,22 @@
+# DaemonSet manifest dosyası
+# Bu dosya, her bir node üzerinde otomatik olarak bir pod çalıştırır.
+# DaemonSet, tüm düğümlerde çalışan uygulamalar için kullanılır.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: example-daemonset    # DaemonSet adı
+  namespace: my-namespace    # Oluşturulacağı namespace
+spec:
+  selector:
+    matchLabels:
+      app: daemon-app       # Yönetilecek pod'ların etiketi
+  template:
+    metadata:
+      labels:
+        app: daemon-app     # Pod etiketleri
+    spec:
+      containers:
+      - name: daemon-container  # Container adı
+        image: busybox          # Basit bir örnek image
+        # Komut: Her node'da hostname bilgisini ekrana yazdırır ve 1 saat uyur
+        command: ["sh", "-c", "echo DaemonSet running on $(hostname); sleep 3600"] 

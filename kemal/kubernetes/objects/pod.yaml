@@ -1,0 +1,16 @@
+# Basit Pod manifest dosyası
+# Bu pod, 'my-namespace' içinde çalışacak ve nginx image kullanacaktır.
+# Pod birden fazla container içerebilir. Cunku pod'lar container'ların çalıştığı bir ortamı temsil eder.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod     # Pod'un adı
+  namespace: my-namespace  # Pod'un yer alacağı namespace
+  labels:
+    app: myapp         # Etiket, seçim ve yönetim için kullanılır.
+spec:
+  containers:
+  - name: my-container   # Container adı
+    image: nginx:latest  # Kullanılan container image
+    ports:
+    - containerPort: 80  # Container'da açılan port 

@@ -1,0 +1,16 @@
+# PersistentVolumeClaim (PVC) manifest dosyası
+# Bu dosya, bir uygulamanın depolama kaynağı talebini (PV ile eşleşecek şekilde) tanımlar.
+# PVC, Kubernetes'te depolama kaynağı taleplerini yönetmek için kullanılır.
+# PVC, PV'ye bağlanır ve PV'den depolama alır.
+# PV ise depolama kaynağını temsil eder.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc       # PVC adı
+  namespace: my-namespace  # Oluşturulacağı namespace
+spec:
+  accessModes:
+    - ReadWriteOnce        # PV ile uyumlu erişim modu
+  resources:
+    requests:
+      storage: 1Gi         # Talep edilen depolama miktarı 

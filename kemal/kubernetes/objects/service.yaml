@@ -1,0 +1,19 @@
+# Service manifest dosyası
+# Bu dosya, pod'lara ağ üzerinden erişimi sağlamak için bir servis tanımlar.
+# Service, pod'ların belirli bir port üzerinden erişilebilir hale getirilmesini sağlar.
+# Onemlidir cunku pod'larin dahil oldugu node'lar degistiginde, pod'larin ip adresi degisebilir.
+# Bu yuzden service'ler kullanilir.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service   # Servis adı
+  namespace: my-namespace # Hangi namespace içinde oluşturulacağı
+spec:
+  selector:
+    app: myapp          # Hangi pod'ların servise dahil edileceği
+  ports:
+  - protocol: TCP
+    port: 80           # Servis portu
+    targetPort: 80     # Pod içindeki container portu
+  type: NodePort       # Minikube'da dışarıya açmak için NodePort kullanılır 
