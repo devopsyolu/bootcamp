@@ -1,0 +1,92 @@
+# Bu YAML dosyası, Kubernetes üzerinde 'demo-web' isimli bir Deployment tanımlar.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web
+  namespace: devopsyolu
+  labels:
+    app: demo-web
+    ahmet: mehmet
+spec:
+  replicas: 2
+  # replicas: Çalıştırılacak pod sayısını belirtir. Burada 2 pod kopyası çalıştırılır.
+  selector:
+    matchLabels:
+      app: demo-web
+      # matchLabels: Deployment'in, template içindeki etiketlerle eşleşmesini sağlar.
+  template:
+    metadata:
+      labels:
+        app: demo-web
+        # Pod'lara eklenen etiket. Üstteki selector ile eşleşmesi gerekir.
+    spec:
+      volumes:
+        - name: nginx-html
+          emptyDir: {}
+          # emptyDir: Pod her yeniden başlatıldığında sıfırlanan geçici bir disk alanı sağlar.
+        - name: index-template
+          configMap:
+            name: demo-web-index
+            # configMap: index.html dosyasının kaynağını burada tanımlar.
+
+      initContainers:
+        - name: init-html
+          # initContainer: Pod ana container'ları başlamadan önce çalışacak container'dır.
+          image: busybox:latest
+          command: 
+            - /bin/sh
+            - -c
+            - |
+              echo "Copying and processing index.html..."
+              cp /template/index.html /html/
+              cd /html
+              for file in $(find . -type f -name "*.html"); do
+                echo "Processing $file..."
+                while IFS= read -r line; do
+                  eval echo \"$line\"
+                done < "$file" > "$file.tmp"
+                mv "$file.tmp" "$file"
+              done
+          # Bu betik ile index.html dosyası kopyalanıyor ve içerik içindeki değişkenler environment değişkenlerine göre güncelleniyor.
+          env:
+            - name: DB_HOST
+              value: "demo-postgres-svc"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "example"
+          # Bu environment değişkenleri, initContainer içinde shell betiği tarafından kullanılabilir.
+          volumeMounts:
+            - name: nginx-html
+              mountPath: /html
+            - name: index-template
+              mountPath: /template
+
+      containers:
+        - name: web-container
+          # Ana container: Nginx sunucu çalıştırır.
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+            # Nginx, 80 numaralı port üzerinden dışarıya servis verir.
+
+          env:
+            - name: DB_HOST
+              value: "demo-postgres-svc"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "example"
+            # Bu environment değişkenleri web-container içerisinde de kullanılabilir.
+          volumeMounts:
+            - name: nginx-html
+              mountPath: /usr/share/nginx/html
+              # Nginx'in varsayılan belge dizinine, initContainer tarafından oluşturulan HTML dosyaları bağlanır. 
+
+# kubectl rollout restart deployment demo-web
+
+# kubectl rollout history deployment demo-web
+
+# kubectl rollout undo deployment demo-web
+
+

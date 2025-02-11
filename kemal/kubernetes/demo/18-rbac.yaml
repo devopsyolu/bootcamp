@@ -1,0 +1,100 @@
+---
+# 1) Örnek bir ServiceAccount tanımı
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-serviceaccount
+  namespace: devopsyolu
+
+---
+# 2) Namespace bazında geçerli olacak bir Role
+#    Bu role, sadece Pod'lar üzerinde get/watch/list yetkisi tanımlar.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: example-role
+  namespace: devopsyolu
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+
+---
+# 3) RoleBinding ile Role'ü kullanıcılar veya servis hesaplarıyla eşleştiriyoruz.
+#    Burada example-role, example-serviceaccount'a bağlandı.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: example-rolebinding
+  namespace: devopsyolu
+subjects:
+  - kind: ServiceAccount
+    name: example-serviceaccount
+    namespace: devopsyolu
+roleRef:
+  kind: Role
+  name: example-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# 4) Kümeye (cluster düzeyinde) geçerli olacak bir ClusterRole örneği.
+#    Burada tüm namespace'lerdeki configmap nesneleri üzerinde yetkiler veriliyor.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: example-clusterrole
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+
+---
+# 5) ClusterRoleBinding ile ClusterRole'ü bir kullanıcı veya servis hesabına bağlıyoruz.
+#    Burada example-clusterrole, kullanıcı kimliği user:myuser'a tanımlanıyor.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: example-clusterrolebinding
+subjects:
+  - kind: User
+    name: myuser
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: example-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+
+
+# TOKEN=$(kubectl create token example-serviceaccount --namespace devopsyolu)
+# CLUSTER_NAME=$(kubectl config current-context)
+# kubectl config set-credentials example-sacreds --token="$TOKEN"
+# kubectl config set-context example-sacontext --cluster="$CLUSTER_NAME" --user=example-sacreds
+# kubectl config use-context example-sacontext
+
+# # Artık example-sacreds ile kimlik doğrulaması yapacak şekilde kubectl kullanabilirsiniz.
+# kubectl get pods --namespace devopsyolu
+
+
+# # 1) "myuser" olarak pod bilgisi alma izni var mı?
+# kubectl auth can-i get pods --namespace devopsyolu --as user:myuser
+
+# # 2) "myuser" olarak configmap’ler üzerinde list izni var mı?
+# kubectl auth can-i list configmaps --as user:myuser
+
+# # 3) "example-serviceaccount" olarak pods üzerinde watch izni var mı?
+# kubectl auth can-i watch pods \
+#   --namespace devopsyolu \
+#   --as system:serviceaccount:devopsyolu:example-serviceaccount
+
+# # 4) "example-serviceaccount" olarak configmaps üzerinde get izni var mı? 
+# # (Yukarıdaki RBAC ayarlarına göre, burada "no" cevabı beklenir.)
+# kubectl auth can-i get configmaps \
+#   --as system:serviceaccount:devopsyolu:example-serviceaccount
+
+# # 5) "example-serviceaccount" olarak pods oluşturabilir miyim?
+# kubectl auth can-i create pods \
+#   --namespace devopsyolu \
+#   --as system:serviceaccount:devopsyolu:example-serviceaccount
+
+
+#  kubectl get configmaps --namespace devopsyolu --as myuser

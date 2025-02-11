@@ -16,7 +16,8 @@ spec:
   template:
     metadata:
       labels:
-        app: myapp         # Pod'lara atanacak etiket
+        app: myapp      # Pod'lara atanacak etiket
+        # Bu labellar selector ile eşleştirilir o yuzden ikisi ayni olmalidir.
     spec:
       containers:
       - name: my-container  # Container adı

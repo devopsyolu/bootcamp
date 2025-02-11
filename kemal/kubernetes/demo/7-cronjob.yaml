@@ -1,0 +1,22 @@
+# Bu örnek, her 1 dakikada bir çalışan bir CronJob gösterir.
+# Minikube üzerinde:
+#   kubectl apply -f 7-cronjob.yaml
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: demo-cronjob
+  namespace: devopsyolu
+spec:
+  # Dakika, saat, gün, ay, haftanın günü (cron format)
+  schedule: "* * * * *"  # Her dakika tetiklenir
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cronjob-container
+              image: busybox:latest
+              command: ["sh", "-c", "echo 'CronJob Triggered'; sleep 5"]
+          restartPolicy: Never
+  # concurrencyPolicy: Forbid -> Bir önceki job bitmeden yenisi başlamasın gibi ayarlar eklenebilir 

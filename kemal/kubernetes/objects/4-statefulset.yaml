@@ -23,11 +23,20 @@ spec:
         image: nginx:latest       # Kullanılan image
         ports:
         - containerPort: 80       # Container portu
+        volumeMounts:        # Container içindeki mount noktası
+        - name: data
+          mountPath: /usr/share/nginx/html  # Nginx'in web root dizini
+        - name: config-volume               # Konfigürasyon için ek volume
+          mountPath: /etc/nginx/conf.d
+      volumes:              # Ek volume'lar (ConfigMap, Secret vb. için)
+      - name: config-volume
+        configMap:
+          name: nginx-config
   volumeClaimTemplates:
   - metadata:
       name: data                # PVC adı
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: [ "ReadWriteOnce" ] # Digerleri ReadWriteMany, ReadWriteOncePod, ReadOnlyMany
       resources:
         requests:
-          storage: 1Gi          # İstenen disk kapasitesi 
+          storage: 256Mi         # İstenen disk kapasitesi 

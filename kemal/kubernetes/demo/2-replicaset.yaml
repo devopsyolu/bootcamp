@@ -1,0 +1,27 @@
+# Bu örnek, aynı Pod'un 3 kopyasını (replica) çalıştıran bir ReplicaSet tanımlar.
+# Minikube üzerinde:
+#   kubectl apply -f 2-replicaset.yaml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: demo-replicaset
+  labels:
+    app: demo-rs
+  namespace: devopsyolu
+spec:
+  # Pod'ların kaç kopyasının çalışacağını belirtiyoruz.
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-rs
+  template:
+    metadata:
+      labels:
+        app: demo-rs
+    spec:
+      containers:
+        - name: busybox-container
+          image: busybox:latest
+          command: ["sh", "-c", "echo ReplicaSet Demo && sleep 3600"]
+          # busybox ile basit bir komut çalıştırıyoruz; sleep 3600 ile Pod arka planda uzun süre çalışır 

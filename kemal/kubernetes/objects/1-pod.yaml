@@ -1,0 +1,40 @@
+# Basit Pod manifest dosyası
+# Bu pod, 'my-namespace' içinde çalışacak ve nginx image kullanacaktır.
+# Pod birden fazla container içerebilir. Cunku pod'lar container'ların çalıştığı bir ortamı temsil eder.
+apiVersion: v1 # Kubernetes API sürümüdur. 
+kind: Pod
+metadata:
+  name: example-pod     # Pod'un adı
+  namespace: my-namespace  # Pod'un yer alacağı namespace
+  labels:
+    app: myapp         # Etiket, seçim ve yönetim için kullanılır.
+spec:
+  containers:
+  - name: my-container   # Container adı
+    image: nginx:latest  # Kullanılan container image
+    ports:
+    - containerPort: 80  # Container'da açılan port 
+    # Add liveness and readiness probes
+    livenessProbe: # Liveness probe, container'ın canlı olup olmadığını kontrol eder.
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe: # Readiness probe, container'ın hazır olup olmadığını kontrol eder.
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    resources: # Resource limits, container'ın kullanabileceği kaynakları sınırlar.
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+      requests:
+        memory: "128Mi"
+        cpu: "100m" 

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod-with-vol
+  namespace: devopsyolu
+spec:
+  containers:
+    - name: demo-container
+      image: nginx:latest
+      volumeMounts:
+        - name: demo-volume
+          mountPath: /usr/share/nginx/html
+        - name: demo-volume-2
+          mountPath: /data
+  volumes:
+    - name: demo-volume
+      persistentVolumeClaim:
+        claimName: demo-pvc
+    - name: demo-volume-2
+      persistentVolumeClaim:
+        claimName: demo-pvc-2

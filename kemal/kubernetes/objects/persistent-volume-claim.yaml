@@ -6,11 +6,19 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: example-pvc       # PVC adı
-  namespace: my-namespace  # Oluşturulacağı namespace
+  name: my-pvc
+  namespace: my-namespace
 spec:
   accessModes:
-    - ReadWriteOnce        # PV ile uyumlu erişim modu
+    # - ReadWriteOnce # PV'nin tek bir pod ile paylaşılması
+    # - ReadOnlyMany # PV'nin birden fazla pod ile paylaşılması
+    - ReadWriteMany # PV'nin birden fazla pod ile paylaşılması
+    # - ReadWriteOncePod # PV'nin tek bir pod ile paylaşılması
   resources:
     requests:
-      storage: 1Gi         # Talep edilen depolama miktarı 
+      storage: 1Gi
+  storageClassName: standard    # PV ile aynı storage class olmalı
+  volumeName: example-pv  # Özellikle bu PV'yi kullanmasını sağlar
+  selector:
+    matchLabels:
+      type: local
