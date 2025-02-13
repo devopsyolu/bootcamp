@@ -5,6 +5,12 @@ kind: ServiceAccount
 metadata:
   name: example-serviceaccount
   namespace: devopsyolu
+---
+# User olustur
+# apiVersion: 
+# kind: User
+# metadata:
+#   name: myuser
 
 ---
 # 2) Namespace bazında geçerli olacak bir Role

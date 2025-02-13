@@ -1,0 +1,13 @@
+controller:
+  replicaCount: 2
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+      # Opsiyonel ek ayarlar (ihtiyaca göre ekleyebilirsiniz):
+      # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:REGION:ACCOUNT:certificate/CERT_ID"
+      # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+  publishService:
+    enabled: true 

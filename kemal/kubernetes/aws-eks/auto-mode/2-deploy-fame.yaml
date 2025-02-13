@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-path-deployment
+  labels:
+    app: multi-path
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: multi-path
+  template:
+    metadata:
+      labels:
+        app: multi-path
+    spec:
+      containers:
+      - name: echo
+        image: nginxdemos/hello
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: multi-path-service
+  labels:
+    app: multi-path
+spec:
+  selector:
+    app: multi-path
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-path-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host:  # Kendi domaininizi burada belirtin veya kaldırabilirsiniz
+    http:
+      paths:
+      - path: /test
+        pathType: Prefix
+        backend:
+          service:
+            name: multi-path-service
+            port:
+              number: 80
+      - path: /demo
+        pathType: Prefix
+        backend:
+          service:
+            name: multi-path-service
+            port:
+              number: 80

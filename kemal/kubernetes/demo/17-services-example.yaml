@@ -117,12 +117,12 @@ spec:
     - name: different-ports-demo-container
       image: nginx:latest
       ports:
-        - containerPort: 8080
+        - containerPort: 80
           # Pod içindeki konteyner, 8080 portunda uygulamayı dinliyor.
 
 ---
 apiVersion: v1
-kind: Service
+kind: Service 
 metadata:
   name: different-ports-svc
   namespace: devopsyolu
@@ -131,6 +131,6 @@ spec:
   selector:
     app: different-ports-demo
   ports:
-    - port: 80               # Servis portu; küme içinden 80 portundan erişilecek.
-      targetPort: 8080       # Pod içindeki konteynerin (containerPort) 8080 portu.
+    - port: 8080              # Servis portu; küme içinden 80 portundan erişilecek.
+      targetPort: 80       # Pod içindeki konteynerin (containerPort) 8080 portu.
       # Bu ayar sayesinde, Service 80 portundan gelen istekleri Pod'daki 8080 portuna yönlendirir. 
