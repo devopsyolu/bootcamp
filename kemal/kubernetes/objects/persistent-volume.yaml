@@ -1,0 +1,21 @@
+# PersistentVolume (PV) manifest dosyası
+# Bu dosya, kalıcı depolama kaynağını tanımlar.
+# PV, Kubernetes'te kalıcı depolama kaynağını temsil eder.
+# PV'ler cluster düzeyinde tanımlıdır; namespace kullanılmaz.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv        # PersistentVolume adı
+  labels:              # Etiketler eklendi
+    type: local
+  # NOT: PersistentVolume'lar cluster düzeyinde tanımlıdır; namespace kullanılmaz.
+spec:
+  capacity:
+    storage: 1Gi          # Sağlanacak depolama kapasitesi
+  accessModes:
+    - ReadWriteMany       # Erişim modu
+  storageClassName: standard     # StorageClass
+  hostPath:
+    path: /data/kubernetes       # Minikube için yerel dosya yolu (düğümdeki yol)
+  persistentVolumeReclaimPolicy: Retain  # PV kullanım sonrası ne yapacağı (saklama) 
+

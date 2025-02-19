@@ -1,0 +1,26 @@
+# Bu örnek, tek bir Pod içinde basit bir Nginx konteyneri çalıştırır.
+# Minikube üzerinde:
+#   kubectl apply -f 1-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  namespace: devopsyolu
+  labels:
+    app: demo-pod
+    site: istanbul
+  annotations:
+    ornek.com/aciklama: "Pod için turkce annotation degeri"
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80  # Konteyner içindeki 80 portunu açıyoruz
+      # Basit bir komut veya environment ekleyebilirsiniz örn:
+      # env:
+      #   - name: ENV_MODE
+      #     value: "development" 
+
+# kubectl get nodes --show-labels

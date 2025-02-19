@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hpa-ns
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: hpa-ns
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: aputra/myapp-195:v2
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: hpa-ns
+spec:
+  ports:
+    - port: 8080
+      targetPort: http
+  selector:
+    app: myapp
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myapp
+  namespace: hpa-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 60
+
+# kubectl get hpa -n hpa-ns
+# kubectl get svc -n hpa-ns
+# kubectl port-forward svc/myapp 8080:8080 -n hpa-ns
+# http://localhost:8080/api/cpu?index=44
+

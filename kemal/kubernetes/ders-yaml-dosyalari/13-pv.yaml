@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: demo-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/demo-pv"
+  # NFS örneği
+  # nfs:
+  #   server: nfs-server.example.com
+  #   path: "/path/to/share"
+
+  # # veya Cloud Provider örneği (AWS)
+  # awsElasticBlockStore:
+  #   volumeID: <volume-id>
+  #   fsType: ext4
+
+  # # veya Cloud Provider örneği (Azure)
+  # azureDisk:
+  #   diskName: myAKSDisk
+  #   diskURI: /subscriptions/<subscription-id>/resourceGroups/... 

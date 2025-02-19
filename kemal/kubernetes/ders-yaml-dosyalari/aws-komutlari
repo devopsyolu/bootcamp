@@ -1,0 +1,46 @@
+#1
+aws eks update-kubeconfig --name auto-mode --region eu-west-1
+
+aws eks list-clusters --region eu-west-1
+
+aws eks list-nodegroups --cluster-name auto-mode --region eu-west-1
+
+#2
+aws eks update-kubeconfig --name manual-mode --region eu-west-1
+kubectl config current-context
+
+# kubectl change namespace
+kubectl config set-context --current --namespace=default
+
+# kubectl get nodes
+kubectl get nodes
+
+# kubectl current context
+kubectl config view --minify | grep current-context
+
+# kubectl auth whoami
+kubectl auth whoami
+
+# kubectl get clusterrolebinding
+kubectl get clusterrolebinding
+
+# kubectl get clusterrole
+kubectl get clusterrole
+
+# AWS de kullanirken AWS anlayabilmek icin bu etiketleri istiyor.
+# detaylar: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+# bununla birlikte annotation'larda kullanilabilir. bunlari anlamak onemli.
+# fakat teknik olarak gereksinim istemiyor. okuma-ogrenme
+"kubernetes.io/role/elb"                               = "1"
+"kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
+
+
+# minikube addons enable ingress
+minikube addons enable ingress
+
+
+
+
+
+
+

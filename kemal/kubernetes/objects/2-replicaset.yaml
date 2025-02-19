@@ -1,0 +1,26 @@
+# ReplicaSet manifest dosyası
+# Bu dosya, belirli sayıda pod'un sürekli çalışmasını sağlayarak istenen durumu korur.
+# ReplicaSet, pod'ların sayısını kontrol eder ve gerektiğinde yeni pod'lar oluşturur.
+# ReplicaSet, Deployment'a göre daha basit bir yapıya sahiptir.
+# Deployment'da ReplicaSet'ler kullanılır.
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: example-replicaset  # ReplicaSet adı
+  namespace: my-namespace   # Oluşturulacağı namespace
+spec:
+  replicas: 2                # 2 adet pod çalıştırılacak
+  selector:
+    matchLabels:
+      app: myapp           # Yönetilecek pod'ların eşleştirme etiketi
+  template:
+    metadata:
+      labels:
+        app: myapp      # Pod'lara atanacak etiket
+        # Bu labellar selector ile eşleştirilir o yuzden ikisi ayni olmalidir.
+    spec:
+      containers:
+      - name: my-container  # Container adı
+        image: nginx:latest # Kullanılan image
+        ports:
+        - containerPort: 80 # Container'da açılan port 

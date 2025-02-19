@@ -1,0 +1,19 @@
+# CronJob manifest dosyası
+# Bu dosya, belirli zaman aralıklarında tekrarlanan görevleri tanımlar.
+# CronJob, belirli bir zamanlamaya göre çalışan görevleri yönetmek için kullanılır.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: example-cronjob   # CronJob adı
+  namespace: my-namespace # Oluşturulacağı namespace
+spec:
+  schedule: "*/5 * * * *"  # Her 5 dakikada bir çalıştırılacak
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: cronjob
+            image: busybox   # Kullanılacak image
+            command: ["sh", "-c", "echo CronJob executed; sleep 10"] 

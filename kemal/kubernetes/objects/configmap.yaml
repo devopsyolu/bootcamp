@@ -1,0 +1,13 @@
+# ConfigMap manifest dosyası
+# Bu dosya, uygulama konfigürasyonlarını (örneğin, ayar dosyalarını) tanımlar.
+# ConfigMap, uygulama yapılandırmalarını veya gizli bilgileri yönetmek için kullanılır.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap   # ConfigMap adı
+  namespace: my-namespace   # Oluşturulacağı namespace
+data:
+  # Uygulamanın konfigürasyon verileri
+  app.properties: |   
+    key1=value1
+    key2=value2 

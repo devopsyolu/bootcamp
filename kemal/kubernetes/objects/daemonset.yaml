@@ -1,0 +1,48 @@
+# DaemonSet manifest dosyası
+# Bu dosya, her bir node üzerinde otomatik olarak bir pod çalıştırır.
+# DaemonSet, tüm düğümlerde çalışan uygulamalar için kullanılır.
+# Ornek olarak, her bir node üzerinde bir log collector çalıştırır. Bu image icin gecerli degil fakat gercek hayatda log collector icin gecerli
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-collector
+  namespace: my-namespace
+  labels:
+    app: log-collector
+spec:
+  selector:
+    matchLabels:
+      app: log-collector
+  template:
+    metadata:
+      labels:
+        app: log-collector
+    spec:
+      containers:
+      - name: fluentd
+        image: fluent/fluentd:v1.14-debian-1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 200m
+            memory: 400Mi
+        env:
+          - name: FLUENTD_ARGS
+            value: "--no-supervisor -q"
+        volumeMounts:
+          - name: varlog
+            mountPath: /var/log
+          - name: docker-logs
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+      volumes: # Kaynak: https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+        - name: varlog
+          hostPath: # HostPath volume tipi ile 
+            path: /var/log
+            type: Directory
+        - name: docker-logs
+          hostPath:
+            path: /var/lib/docker/containers
+            type: Directory 

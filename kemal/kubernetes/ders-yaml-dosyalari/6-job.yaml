@@ -1,0 +1,22 @@
+# Bu örnek, tek seferlik bir batch görevi yapan Job tanımı.
+# Minikube üzerinde:
+#   kubectl apply -f 6-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-job
+  namespace: devopsyolu
+spec:
+  parallelism: 1      # Aynı anda kaç Pod çalışabileceğini belirler (1 => sırayla)
+  completions: 3      # Toplam 3 kez başarıyla tamamlanması gerekir
+  template:
+    spec:
+      containers:
+        - name: job-container
+          image: busybox:latest
+          command: ["sh", "-c", "echo 'Hello from a Job!' && sleep 5"]
+          # 5 sn sonra iş tamamlanır
+      restartPolicy: Never   # Job tamamlanınca Pod tekrar başlamaz
+  backoffLimit: 4           # Başarısız olursa en fazla 4 kez tekrar dene 
+  # Bu Job, toplamda 3 kez (completions=3) çalışacaktır. Her biri sırasıyla (parallelism=1) tetiklenir. 

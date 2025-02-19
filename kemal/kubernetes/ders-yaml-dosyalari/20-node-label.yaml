@@ -1,0 +1,39 @@
+# kubectl get pods -o wide --show-labels
+
+# kubectl get nodes --show-labels
+
+#  kubectl label node <node-ismi> site=istanbul
+# kubectl label nodes minikube-m03 disktype=ssd
+
+
+# kubectl taint nodes minikube-m03 price=spot:NoSchedule
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-nodeselector
+  namespace: devopsyolu
+  labels:
+    app: demo-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-pod
+  template:
+    metadata:
+      labels:
+        app: demo-pod
+      annotations:
+        ornek.com/aciklama: "Deployment için turkce annotation degeri"
+    spec:
+      nodeSelector:
+        site: istanbul  # Bu etiket, node'larda daha önce eklenmiş olan etiketle eşleşmelidir.
+        disktype: ssd
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+
+          ports:
+            - containerPort: 80
+

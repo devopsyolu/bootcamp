@@ -1,0 +1,24 @@
+# Bu örnek, kümedeki her Node'da bir Pod çalıştıran DaemonSet'i gösterir.
+# Örnek: Basit bir "node-exporter" mantığında çalışır ve Node metriklerini toplar.
+# Minikube üzerinde:
+#   kubectl apply -f 5-daemonset.yaml
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: demo-daemonset
+  namespace: devopsyolu
+spec:
+  selector:
+    matchLabels:
+      app: demo-ds
+  template:
+    metadata:
+      labels:
+        app: demo-ds
+    spec:
+      containers:
+        - name: node-exporter
+          image: prom/node-exporter:latest
+          # Node Exporter, sistem metriklerini /metrics endpoint'inden sunar (Prometheus uyumlu).
+          # DaemonSet mantığıyla, her node üzerinde bir Pod olarak çalışarak metrikler toplar. 

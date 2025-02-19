@@ -1,0 +1,23 @@
+# Ingress manifest dosyası
+# Bu dosya, dışarıdan gelen HTTP/HTTPS isteklerini belirli servis(ler)e yönlendirmek için kullanılır.
+# Not: Minikube'da Ingress Controller kurulmuş olmalı.
+# Ingress, Kubernetes'te gelen istekleri belirli servislere yönlendirmek için kullanılır.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress     # Ingress adı
+  namespace: my-namespace   # Oluşturulacağı namespace
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # URL yeniden yazım ayarı
+spec:
+  rules:
+  - host: local.example.com  # Yerel test için host adı
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: example-service  # İsteklerin yönlendirileceği servis
+            port:
+              number: 80           # Servis portu 

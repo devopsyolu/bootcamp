@@ -1,0 +1,7 @@
+# Kubernetes Namespace manifest dosyası
+# Bu dosya, kaynakları izole etmek için kullanılacak bir namespace tanımlar.
+# Namespace, Kubernetes'te kaynakları gruplayarak yönetmek için kullanılır.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace  # Tüm objelerimizi bu namespace altında oluşturacağız 

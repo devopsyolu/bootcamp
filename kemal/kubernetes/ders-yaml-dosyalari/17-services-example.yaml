@@ -1,0 +1,136 @@
+---
+# 1) ClusterIP Servis Örneği
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: clusterip-pod
+  namespace: devopsyolu
+  labels:
+    app: clusterip-demo
+spec:
+  containers:
+    - name: clusterip-demo-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+          # containerPort => Konteynerin içinde uygulamanın dinlediği gerçek port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clusterip-svc
+  namespace: devopsyolu
+spec:
+  type: ClusterIP
+  selector:
+    app: clusterip-demo
+  ports:
+    - port: 80
+      # port => Servisin küme içinden erişildiği port
+      targetPort: 80
+      # targetPort => Servisin trafiği yönlendirdiği Pod'daki containerPort
+
+---
+# 2) NodePort Servis Örneği
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeport-pod
+  namespace: devopsyolu
+  labels:
+    app: nodeport-demo
+spec:
+  containers:
+    - name: nodeport-demo-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+          # containerPort => Konteynerde çalışan uygulama portu
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport-svc
+  namespace: devopsyolu
+spec:
+  type: NodePort
+  selector:
+    app: nodeport-demo
+  ports:
+    - port: 80
+      # port => NodePort servisin cluster içi portu
+      targetPort: 80
+      # targetPort => Pod'un containerPort değeri
+      nodePort: 30080
+      # nodePort => Node'un (sunucunun) erişilebileceği port numarası (30000-32767)
+
+---
+# 3) LoadBalancer Servis Örneği
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: loadbalancer-pod
+  namespace: devopsyolu
+  labels:
+    app: loadbalancer-demo
+spec:
+  containers:
+    - name: loadbalancer-demo-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+          # containerPort => Konteyner içindeki uygulama portu
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-svc
+  namespace: devopsyolu
+spec:
+  type: LoadBalancer
+  selector:
+    app: loadbalancer-demo
+  ports:
+    - port: 80
+      # port => Servisin "dış dünya" ya da diğer servislerden erişileceği port
+      targetPort: 80
+      # targetPort => Pod'un containerPort değeri; gelen istekler buraya yönlendirilir 
+
+---
+# 4) Bir Servis portu ile Pod içindeki containerPort'un farklı olduğu örnek
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: different-ports-pod
+  namespace: devopsyolu
+  labels:
+    app: different-ports-demo
+spec:
+  containers:
+    - name: different-ports-demo-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+          # Pod içindeki konteyner, 8080 portunda uygulamayı dinliyor.
+
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: different-ports-svc
+  namespace: devopsyolu
+spec:
+  type: ClusterIP
+  selector:
+    app: different-ports-demo
+  ports:
+    - port: 8080              # Servis portu; küme içinden 80 portundan erişilecek.
+      targetPort: 80       # Pod içindeki konteynerin (containerPort) 8080 portu.
+      # Bu ayar sayesinde, Service 80 portundan gelen istekleri Pod'daki 8080 portuna yönlendirir. 
